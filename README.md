@@ -1,6 +1,12 @@
 # PDF Merger Pro - Tool Ghép File PDF Trực Quan
 
+[![Download PDFMergerPro.exe](https://img.shields.io/badge/Download-PDFMergerPro.exe_(v1.0.0)-blue?style=for-the-badge&logo=windows)](https://github.com/vnnit/PDF-Merger-Tool/releases/download/v1.0.0/PDFMergerPro.exe)
+
 Tool ghép (merge) nhiều file PDF thành 1 file duy nhất với giao diện Web hiện đại, dễ dùng.
+
+## 📥 Tải về nhanh
+👉 **[Bấm vào đây để tải file PDFMergerPro.exe (v1.0.0)](https://github.com/vnnit/PDF-Merger-Tool/releases/download/v1.0.0/PDFMergerPro.exe)**  
+*(Chỉ cần tải về và nhấp đúp là dùng ngay trên Windows, không cần cài đặt bất kỳ phần mềm phụ trợ nào!)*
 
 ## ✨ Điểm nổi bật
 - **File `.exe` độc lập:** Chạy trực tiếp chỉ với 1 file duy nhất `PDFMergerPro.exe`, không cần cài đặt Python, Node.js hay bất cứ phần mềm nào khác!
