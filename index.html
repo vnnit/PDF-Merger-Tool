@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Merger Pro - Công cụ Ghép File PDF</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --success: #10b981;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .badge-tag {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.8rem;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #1e1b4b;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    /* Drop Zone */
+    .dropzone {
+      border: 2px dashed #cbd5e1;
+      border-radius: var(--radius);
+      background: var(--card-bg);
+      padding: 40px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      transform: translateY(-2px);
+    }
+
+    .dropzone-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      background: #e0e7ff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      transition: transform 0.2s;
+    }
+
+    .dropzone:hover .dropzone-icon {
+      transform: scale(1.1);
+    }
+
+    .dropzone-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .dropzone-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .file-input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 24px;
+      margin-bottom: 16px;
+    }
+
+    .file-count {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .actions-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+    }
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-danger-outline {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid #fecaca;
+    }
+    .btn-danger-outline:hover {
+      background: #fee2e2;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+    .btn-primary:hover:not(:disabled) {
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.45);
+      transform: translateY(-1px);
+    }
+    .btn-primary:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* File List */
+    .file-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+      min-height: 40px;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      transition: transform 0.15s, box-shadow 0.15s;
+      user-select: none;
+    }
+
+    .file-item.sortable-ghost {
+      opacity: 0.4;
+      background: #f1f5f9;
+      border: 2px dashed #94a3b8;
+    }
+
+    .file-item.sortable-chosen {
+      background: #eef2ff;
+      box-shadow: 0 8px 16px rgba(79, 70, 229, 0.15);
+    }
+
+    .drag-handle {
+      cursor: grab;
+      color: #94a3b8;
+      padding: 4px;
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+    }
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .file-index {
+      font-weight: 700;
+      color: #64748b;
+      width: 28px;
+      font-size: 0.9rem;
+    }
+
+    .file-thumb-container {
+      width: 44px;
+      height: 56px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      margin-right: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .file-thumb-canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .file-thumb-placeholder {
+      color: #ef4444;
+      font-size: 1.5rem;
+    }
+
+    .file-info {
+      flex: 1;
+      min-width: 0;
+      margin-right: 12px;
+    }
+
+    .file-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+      color: #1e293b;
+    }
+
+    .file-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .meta-tag {
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Page Range Input */
+    .file-page-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-right: 14px;
+      font-size: 0.85rem;
+    }
+
+    .file-page-selector label {
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .file-page-input {
+      width: 110px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border 0.15s;
+    }
+
+    .file-page-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .file-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .icon-btn {
+      background: transparent;
+      border: none;
+      padding: 6px;
+      border-radius: 6px;
+      color: #64748b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .icon-btn:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .icon-btn.delete-btn:hover {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+
+    /* Bottom Merge Settings Card */
+    .merge-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      margin-top: 10px;
+    }
+
+    .merge-grid {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 16px;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #334155;
+    }
+
+    .text-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .text-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    /* Progress bar */
+    .progress-wrapper {
+      margin-top: 16px;
+      display: none;
+    }
+
+    .progress-bar-bg {
+      background: #e2e8f0;
+      border-radius: 9999px;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      background: linear-gradient(90deg, #4f46e5, #06b6d4);
+      height: 100%;
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    .progress-status {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Empty state */
+    .empty-placeholder {
+      text-align: center;
+      padding: 24px;
+      color: #94a3b8;
+      font-size: 0.95rem;
+      background: #f8fafc;
+      border-radius: var(--radius);
+      border: 1px dashed #e2e8f0;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 36px;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .tip-box {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #166534;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    @media (max-width: 640px) {
+      .file-item {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .file-page-selector {
+        width: 100%;
+        margin-left: 42px;
+        margin-right: 0;
+      }
+      .merge-grid {
+        flex-direction: column;
+      }
+      .merge-grid button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="badge-tag">🔒 An toàn 100% • Xử lý Offline trong trình duyệt</div>
+      <h1>Bộ Ghép File PDF Trực Tuyến</h1>
+      <p>Kéo thả các file PDF, sắp xếp thứ tự và ghép thành một file duy nhất trong tích tắc.</p>
+    </header>
+
+    <!-- Upload Drop Zone -->
+    <div class="dropzone" id="dropZone">
+      <input type="file" id="fileInput" class="file-input" multiple accept=".pdf,application/pdf">
+      <div class="dropzone-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+      </div>
+      <div class="dropzone-title">Kéo & Thả các file PDF vào đây</div>
+      <div class="dropzone-desc">Hoặc bấm để duyệt file từ máy tính (chọn được nhiều file cùng lúc)</div>
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="controls-bar" id="controlsBar" style="display: none;">
+      <div class="file-count" id="fileCountText">0 file đã chọn</div>
+      <div class="actions-group">
+        <button class="btn btn-secondary" id="btnAddMore">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Thêm file
+        </button>
+        <button class="btn btn-danger-outline" id="btnClearAll">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          Xóa hết
+        </button>
+      </div>
+    </div>
+
+    <!-- File List Container -->
+    <ul class="file-list" id="fileList">
+      <div class="empty-placeholder" id="emptyNotice">Chưa có file PDF nào được chọn. Hãy thêm các file cần ghép ở trên.</div>
+    </ul>
+
+    <!-- Merge Action Section -->
+    <div class="merge-card" id="mergeCard" style="display: none;">
+      <div class="merge-grid">
+        <div class="form-group">
+          <label for="outputFileName">Tên file sau khi ghép:</label>
+          <input type="text" id="outputFileName" class="text-input" value="merged_document.pdf" placeholder="merged_tailieu.pdf">
+        </div>
+        <button class="btn btn-primary" id="btnMerge" style="height: 46px; padding: 0 28px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Bắt đầu Ghép PDF
+        </button>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="progress-wrapper" id="progressWrapper">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
+        <div class="progress-status">
+          <span id="progressStatusText">Đang chuẩn bị...</span>
+          <span id="progressPercentText">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      <div>
+        <strong>Mẹo:</strong> Kéo biểu tượng <strong>⠿</strong> hoặc dùng mũi tên để đổi thứ tự file ghép. Bạn cũng có thể điền khoảng trang (ví dụ: <code>1-3, 5</code>) nếu chỉ muốn lấy một vài trang từ file đó!
+      </div>
+    </div>
+
+    <footer>
+      Tự động xử lý ngay tại trình duyệt của bạn • Dữ liệu không gửi lên internet • Nhanh & An toàn
+    </footer>
+  </div>
+
+  <!-- Local libraries -->
+  <script src="pdf-lib.min.js"></script>
+  <script src="sortable.min.js"></script>
+  <script src="pdf.min.js"></script>
+  <script>
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js';
+    }
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
