@@ -18,12 +18,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 def run():
     # Allow address reuse
     socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("0.0.0.0", PORT), Handler) as httpd:
+    with socketserver.TCPServer(("127.0.0.1", PORT), Handler) as httpd:
         print("=" * 60)
         print("🚀 TOOL GHEP FILE PDF (PDF MERGER PRO) DANG CHAY")
         print("=" * 60)
-        print(f"👉 Link truy cap Local:     http://localhost:{PORT}")
-        print(f"👉 Link IP Public:          http://144.202.92.46:{PORT}")
+        print(f"👉 Link truy cap Local:     http://127.0.0.1:{PORT}")
+        print(f"👉 Link Localhost:          http://localhost:{PORT}")
         print("=" * 60)
         sys.stdout.flush()
         try:

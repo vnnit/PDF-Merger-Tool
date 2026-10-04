@@ -30,9 +30,9 @@ Tool ghép (merge) nhiều file PDF thành 1 file duy nhất với giao diện W
 ### Cách 2: Chạy trực tiếp qua trình duyệt web
 - Nhấp đúp chuột vào file [**`chay-tool.bat`**](file:///c:/Users/Administrator/Documents/Antigravity/Chatchit/pdf-merger/chay-tool.bat) (hoặc nhấp đúp [**`index.html`**](file:///c:/Users/Administrator/Documents/Antigravity/Chatchit/pdf-merger/index.html)).
 
-### Cách 3: Chạy server chia sẻ qua IP Public / LAN
+### Cách 3: Chạy local server bằng Python
 - Mở terminal và chạy lệnh:
   ```bash
   python app.py
   ```
-- Truy cập từ xa bằng IP: `http://144.202.92.46:8080`
+- Mở trình duyệt truy cập: `http://127.0.0.1:8080` (hoặc `http://localhost:8080`)
